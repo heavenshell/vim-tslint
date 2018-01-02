@@ -1,0 +1,9 @@
+*.swp
+*~
+.DS_Store
+tags
+tests/node_modules/
+tests/vader.vim/
+tests/build/
+tests/tsuquyomi/
+tests/package-lock.json

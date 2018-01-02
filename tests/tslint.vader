@@ -1,0 +1,19 @@
+# vim:set et sw=4 ts=4 tw=79:
+Execute ('Tslint'):
+  :edit ./src/app.ts
+  :Tslint
+  :sleep 1
+
+  let qf = getqflist()
+  AssertEqual len(qf), 16
+
+Execute ('Tslint with tsuquyomi'):
+  :edit ./src/app.ts
+  :let g:tsuquyomi_disable_quickfixwrite = 0
+  :TsuquyomiGeterr
+  :write
+  :Tslint
+  :sleep 1
+
+  let qf = getqflist()
+  AssertEqual len(qf), 20

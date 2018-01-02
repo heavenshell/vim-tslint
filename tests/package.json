@@ -1,0 +1,16 @@
+{
+  "name": "vim-tslint",
+  "version": "1.0.0",
+  "description": "TSLint for vim",
+  "main": "index.js",
+  "scripts": {
+    "build:ts": "tsc --pretty"
+  },
+  "author": "Shinya Ohyanagi",
+  "license": "BSD-2-Clause",
+  "devDependencies": {
+    "tslint": "^5.8.0",
+    "tslint-config-standard": "^6.0.1",
+    "typescript": "^2.6.2"
+  }
+}
