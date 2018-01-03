@@ -4,9 +4,6 @@ An asynchronous Tslint for Vim.
 
 ![Realtime style check](./assets/vim-tslint.gif)
 
-
-![Realtime style check with tsuquyomi](./assets/vim-tslint-tsuquyomi.gif)
-
 ## Invoke manually
 
 Open TypeScript file and just execute `:Tslint`.
