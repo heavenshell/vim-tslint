@@ -1,5 +1,7 @@
 # vim-tslint
 
+[![Build Status](https://travis-ci.org/heavenshell/vim-tslint.svg?branch=master)](https://travis-ci.org/heavenshell/vim-tslint)
+
 An asynchronous Tslint for Vim.
 
 ![Realtime style check](./assets/vim-tslint.gif)
