@@ -6,6 +6,7 @@
 let s:save_cpo = &cpo
 set cpo&vim
 
+let g:tslint_ignore_warning = get(g:, 'tslint_ignore_warning', 1)
 let g:tslint_enable_quickfix = get(g:, 'tslint_enable_quickfix', 0)
 let g:tslint_callbacks = get(g:, 'tslint_callbacks', {})
 let g:tslint_config = get(g:, 'tslint_config', '')
@@ -119,7 +120,8 @@ function! tslint#run(...)
   " Tslint does not supprt STDIN.
   " Write current buffer to temp file and use it.
   let t = tempname()
-  let tmpfile = t . '_tslint.ts'
+  let ext = fnamemodify(file, ':e')
+  let tmpfile = t . '_tslint.' . ext
   call rename(t, tmpfile)
   call writefile(getline(1, line('$')), tmpfile)
 
