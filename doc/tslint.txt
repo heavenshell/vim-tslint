@@ -86,6 +86,14 @@ g:tslint_config						*tslint_confg*
 		Path to tslint config file.
 		Default value is ''
 
+g:tslint_ignore_warnings				*tslint_ignore_warnings*
+		Suppress tslint-config-standard warnings
+		Default value is 1(Suppress warnings)
+
+g:tslint_ignore_prettier
+		Suppress `tslint-plugin-prettier`'s errors.
+		Default value is 1(Suppress warnings)
+
 ==============================================================================
 CHANGELOG						*tslint-changelog*
 2018-01-02
