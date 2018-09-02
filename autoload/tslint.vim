@@ -6,7 +6,8 @@
 let s:save_cpo = &cpo
 set cpo&vim
 
-let g:tslint_ignore_warning = get(g:, 'tslint_ignore_warning', 1)
+let g:tslint_ignore_warnings = get(g:, 'tslint_ignore_warnings', 1)
+let g:tslint_ignore_prettier = get(g:, 'tslint_ignore_prettier', 1)
 let g:tslint_enable_quickfix = get(g:, 'tslint_enable_quickfix', 0)
 let g:tslint_callbacks = get(g:, 'tslint_callbacks', {})
 let g:tslint_config = get(g:, 'tslint_config', '')
@@ -87,8 +88,10 @@ function! s:callback(ch, msg)
   try
     let s:results = json_decode(a:msg)
   catch
-    " Maybe tslint.config warnings were raised.
-    call add(s:warnings, a:msg)
+    if g:tslint_ignore_warnings == 0
+      " Maybe tslint.config warnings were raised.
+      call add(s:warnings, a:msg)
+    endif
   endtry
 endfunction
 
@@ -126,6 +129,9 @@ function! tslint#run(...)
   call writefile(getline(1, line('$')), tmpfile)
 
   let cmd = printf('%s -c %s %s -t json', s:tslint_bin, g:tslint_config, tmpfile)
+  if g:tslint_ignore_prettier == 1
+    let cmd = cmd . ' --fix'
+  endif
   let s:job = job_start(cmd, {
         \ 'callback': {c, m -> s:callback(c, m)},
         \ 'exit_cb': {c, m -> s:exit_cb(c, m, file, mode)},
