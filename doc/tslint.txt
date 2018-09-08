@@ -1,6 +1,6 @@
 *tslint*	Tslint for Vim.
 
-Version: 0.1.0
+Version: 0.2.0
 Author: Shinya Ohynagi <sohyanagi@gmail.com>
 Repository: http://github.com/heavenshell/vim-tslint/
 License: BSD, see LICENSE for more details.
@@ -90,12 +90,16 @@ g:tslint_ignore_warnings				*tslint_ignore_warnings*
 		Suppress tslint-config-standard warnings
 		Default value is 1(Suppress warnings)
 
-g:tslint_ignore_prettier
-		Suppress `tslint-plugin-prettier`'s errors.
-		Default value is 1(Suppress warnings)
+g:tslint_enable_autofix					*tslint_enable_autofix*
+		Enable to run tslint --fix
+		Default value is 0(Do not run autofix)
 
 ==============================================================================
 CHANGELOG						*tslint-changelog*
+2018-09-08
+- Add suppress warnings option
+- Add autofix option
+
 2018-01-02
 - First release
 
