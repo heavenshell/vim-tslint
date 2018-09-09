@@ -94,8 +94,18 @@ g:tslint_enable_autofix					*tslint_enable_autofix*
 		Enable to run tslint --fix
 		Default value is 0(Do not run autofix)
 
+g:tslint_use_tempname					*g:tslint_use_tempname*
+		Tslint dose not support STDIN.
+		Write buffer to file and run tslint.
+		Use Vim's `tempname()` if enabled.
+		Default value is 0(write buffer to temp directory)
+
+
 ==============================================================================
 CHANGELOG						*tslint-changelog*
+2018-09-09
+- Add g:tslint_use_tempname option
+
 2018-09-08
 - Add suppress warnings option
 - Add autofix option

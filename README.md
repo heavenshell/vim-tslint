@@ -18,7 +18,7 @@ autocmd BufWritePost *.ts,*.tsx call tslint#run('a', get_winid())
 
 ## Integrate with Tsuquyomi
 
-You can use Tsuquyomi's `TsuquyomiGeterr` and Tslint.
+You can use Tsuquyomi's `TsuGeterr` and Tslint.
 Set followings to your vimrc.
 
 ```viml
@@ -37,7 +37,6 @@ augroup tslint
 
   function! s:ts_quickfix()
     let winid = win_getid()
-    call setqflist([], 'r')
     execute ':TsuquyomiGeterr'
     call tslint#run('a', winid)
   endfunction

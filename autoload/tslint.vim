@@ -11,6 +11,7 @@ let g:tslint_enable_autofix = get(g:, 'tslint_enable_autofix', 0)
 let g:tslint_enable_quickfix = get(g:, 'tslint_enable_quickfix', 0)
 let g:tslint_callbacks = get(g:, 'tslint_callbacks', {})
 let g:tslint_config = get(g:, 'tslint_config', '')
+let g:tslint_use_tempname = get(g:, 'tslint_use_tempname', 0)
 
 let s:tslint_bin = ''
 let s:results = []
@@ -146,12 +147,19 @@ function! tslint#run(...)
     endif
   endif
 
+  let name = fnamemodify(file, ':t')
+  if name == ''
+    return
+  endif
   " Tslint does not supprt STDIN.
   " Write current buffer to temp file and use it.
-  let t = tempname()
-  let ext = fnamemodify(file, ':e')
-  let tmpfile = t . '_tslint.' . ext
-  call rename(t, tmpfile)
+  if g:tslint_use_tempname == 1
+    let t = tempname()
+    let tmpfile = t . '_tslint_' . name
+    call rename(t, tmpfile)
+  else
+    let tmpfile = '_tslint_' . name
+  endif
   call writefile(getline(1, line('$')), tmpfile)
 
   let cmd = printf('%s -c %s %s -t json', s:tslint_bin, g:tslint_config, tmpfile)
