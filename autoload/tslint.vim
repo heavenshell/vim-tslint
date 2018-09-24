@@ -7,7 +7,6 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 let g:tslint_ignore_warnings = get(g:, 'tslint_ignore_warnings', 1)
-let g:tslint_enable_autofix = get(g:, 'tslint_enable_autofix', 0)
 let g:tslint_enable_quickfix = get(g:, 'tslint_enable_quickfix', 0)
 let g:tslint_callbacks = get(g:, 'tslint_callbacks', {})
 let g:tslint_config = get(g:, 'tslint_config', '')
@@ -79,7 +78,7 @@ function! s:parse_errors(file)
   return results
 endfunction
 
-function! s:exit_cb(ch, msg, file, mode, winsaveview, tmpfile, bufnr)
+function! s:exit_cb(ch, msg, file, mode, winsaveview, tmpfile, bufnr, autofix)
   let warnings = s:parse_warnings(a:file)
   if g:tslint_ignore_warnings == 0
     cal setqflist(warnings, 'a')
@@ -88,7 +87,7 @@ function! s:exit_cb(ch, msg, file, mode, winsaveview, tmpfile, bufnr)
   let errors = s:parse_errors(file)
   call setqflist(errors, 'a')
 
-  if g:tslint_enable_autofix == 1
+  if a:autofix == 1
     let lines = readfile(a:tmpfile)
     let view = winsaveview()
     silent execute '% delete'
@@ -119,23 +118,14 @@ function! s:callback(ch, msg)
   endtry
 endfunction
 
-function! tslint#run(...)
-  if exists('s:job') && job_status(s:job) != 'stop'
-    call job_stop(s:job)
-  endif
-  echomsg '[Tslint] Start'
-
-  let s:results = []
-  let s:warnings = []
-  let file = expand('%:p')
-  let root_path = s:detect_root(file)
+function! s:buffer_to_file(file)
+  let root_path = s:detect_root(a:file)
   if !s:tslint_bin
-    let s:tslint_bin = s:detect_tslint_bin(file)
+    let s:tslint_bin = s:detect_tslint_bin(a:file)
   endif
   if g:tslint_config == ''
-    let g:tslint_config = s:detect_config(file)
+    let g:tslint_config = s:detect_config(a:file)
   endif
-  let mode = a:0 > 0 ? a:1 : 'r'
 
   let ft = &filetype
   if ft !~ 'typescript'
@@ -147,7 +137,7 @@ function! tslint#run(...)
     endif
   endif
 
-  let name = fnamemodify(file, ':t')
+  let name = fnamemodify(a:file, ':t')
   if name == ''
     return
   endif
@@ -162,17 +152,53 @@ function! tslint#run(...)
   endif
   call writefile(getline(1, line('$')), tmpfile)
 
-  let cmd = printf('%s -c %s %s -t json', s:tslint_bin, g:tslint_config, tmpfile)
+  return tmpfile
+endfunction
+
+function! tslint#run(...)
+  if exists('s:job') && job_status(s:job) != 'stop'
+    call job_stop(s:job)
+  endif
+  echomsg '[Tslint] Start'
+
+  let mode = a:0 > 0 ? a:1 : 'r'
+  let s:results = []
+  let s:warnings = []
+  let file = expand('%:p')
+  let tmpfile = s:buffer_to_file(file)
+
   let winsaveview = ''
   let bufnr = 0
-  if g:tslint_enable_autofix == 1
-    let cmd = cmd . ' --fix'
-    let winsaveview = winsaveview()
-    let bufnr = bufnr('%')
-  endif
+
+  let cmd = printf('%s -c %s %s -t json', s:tslint_bin, g:tslint_config, tmpfile)
+  let autofix = 0
   let s:job = job_start(cmd, {
         \ 'callback': {c, m -> s:callback(c, m)},
-        \ 'exit_cb': {c, m -> s:exit_cb(c, m, file, mode, winsaveview, tmpfile, bufnr)},
+        \ 'exit_cb': {c, m -> s:exit_cb(c, m, file, mode, winsaveview, tmpfile, bufnr, autofix)},
+        \ 'in_io': 'buffer',
+        \ 'in_name': file,
+        \ })
+endfunction
+
+function! tslint#fix(...)
+ if exists('s:job') && job_status(s:job) != 'stop'
+    call job_stop(s:job)
+  endif
+  let mode = a:0 > 0 ? a:1 : 'r'
+  let s:results = []
+  let s:warnings = []
+  let file = expand('%:p')
+  let tmpfile = s:buffer_to_file(file)
+
+  let winsaveview = winsaveview()
+  let bufnr = bufnr('%')
+
+  let cmd = printf('%s -c %s %s -t json --fix', s:tslint_bin, g:tslint_config, tmpfile)
+
+  let autofix = 1
+  let s:job = job_start(cmd, {
+        \ 'callback': {c, m -> s:callback(c, m)},
+        \ 'exit_cb': {c, m -> s:exit_cb(c, m, file, mode, winsaveview, tmpfile, bufnr, autofix)},
         \ 'in_io': 'buffer',
         \ 'in_name': file,
         \ })

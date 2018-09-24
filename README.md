@@ -16,6 +16,10 @@ Open TypeScript file and just execute `:Tslint`.
 autocmd BufWritePost *.ts,*.tsx call tslint#run('a', get_winid())
 ```
 
+## Autofix
+
+Execute `:TslintFix` and automatically fix.
+
 ## Integrate with Tsuquyomi
 
 You can use Tsuquyomi's `TsuGeterr` and Tslint.

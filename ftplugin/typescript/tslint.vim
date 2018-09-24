@@ -17,7 +17,9 @@ if !has('channel') || !has('job')
 endif
 
 command! -buffer Tslint :call tslint#run('r', win_getid())
+command! -buffer TslintFix :call tslint#fix('r', win_getid())
 noremap <silent> <buffer> <Plug>(Tslint) :Tslint <CR>
+noremap <silent> <buffer> <Plug>(TslintFix) :TslintFix <CR>
 
 let b:loaded_tslint = 1
 
