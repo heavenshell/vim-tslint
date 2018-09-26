@@ -155,6 +155,14 @@ function! s:buffer_to_file(file)
   return tmpfile
 endfunction
 
+function! s:send(job, input)
+  let channel = job_getchannel(a:job)
+  if ch_status(channel) ==# 'open'
+    call ch_sendraw(channel, a:input)
+    call ch_close_in(channel)
+  endif
+endfunction
+
 function! tslint#run(...)
   if exists('s:job') && job_status(s:job) != 'stop'
     call job_stop(s:job)
@@ -169,15 +177,14 @@ function! tslint#run(...)
 
   let winsaveview = ''
   let bufnr = 0
-
   let cmd = printf('%s -c %s %s -t json', s:tslint_bin, g:tslint_config, tmpfile)
   let autofix = 0
   let s:job = job_start(cmd, {
         \ 'callback': {c, m -> s:callback(c, m)},
         \ 'exit_cb': {c, m -> s:exit_cb(c, m, file, mode, winsaveview, tmpfile, bufnr, autofix)},
-        \ 'in_io': 'buffer',
-        \ 'in_name': file,
+        \ 'in_mode': 'nl',
         \ })
+  call s:send(s:job, tmpfile)
 endfunction
 
 function! tslint#fix(...)
@@ -192,16 +199,15 @@ function! tslint#fix(...)
 
   let winsaveview = winsaveview()
   let bufnr = bufnr('%')
-
   let cmd = printf('%s -c %s %s -t json --fix', s:tslint_bin, g:tslint_config, tmpfile)
 
   let autofix = 1
   let s:job = job_start(cmd, {
         \ 'callback': {c, m -> s:callback(c, m)},
         \ 'exit_cb': {c, m -> s:exit_cb(c, m, file, mode, winsaveview, tmpfile, bufnr, autofix)},
-        \ 'in_io': 'buffer',
-        \ 'in_name': file,
+        \ 'in_mode': 'nl',
         \ })
+  call s:send(s:job, tmpfile)
 endfunction
 
 let &cpo = s:save_cpo
