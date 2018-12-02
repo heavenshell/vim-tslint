@@ -167,7 +167,6 @@ function! tslint#run(...)
   if exists('s:job') && job_status(s:job) != 'stop'
     call job_stop(s:job)
   endif
-  echomsg '[Tslint] Start'
 
   let mode = a:0 > 0 ? a:1 : 'r'
   let s:results = []
