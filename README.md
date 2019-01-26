@@ -13,7 +13,7 @@ Open TypeScript file and just execute `:Tslint`.
 ## Automatically lint on save
 
 ```viml
-autocmd BufWritePost *.ts,*.tsx call tslint#run('a', get_winid())
+autocmd BufWritePost *.ts,*.tsx call tslint#run('a', win_getid())
 ```
 
 ## Autofix
