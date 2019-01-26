@@ -95,10 +95,10 @@ function! s:exit_cb(ch, msg, file, mode, winsaveview, tmpfile, bufnr, autofix)
     call winrestview(view)
   endif
 
-  if len(errors) == 0 && len(warnings) && len(getqflist()) == 0
-    call setqflist([], 'r')
-    cclose
-  endif
+  "if len(errors) == 0 && len(warnings) && len(getqflist()) == 0
+  "  call setqflist([], 'r')
+  "  cclose
+  "endif
 
   call delete(a:tmpfile)
 
@@ -148,7 +148,13 @@ function! s:buffer_to_file(file)
     let tmpfile = t . '_tslint_' . name
     call rename(t, tmpfile)
   else
-    let tmpfile = '_tslint_' . name
+    let dirname = fnamemodify(root_path, ':h')
+    let tmpdir = printf('%s/.vim-tslint', dirname)
+    echomsg tmpdir
+    if !isdirectory(tmpdir)
+      call mkdir(tmpdir)
+    endif
+    let tmpfile = printf('%s/_tslint_%s', tmpdir, name)
   endif
   call writefile(getline(1, line('$')), tmpfile)
 
@@ -157,6 +163,7 @@ endfunction
 
 function! s:send(job, input)
   let channel = job_getchannel(a:job)
+  call ch_setoptions(channel, {'timeout': 2000})
   if ch_status(channel) ==# 'open'
     call ch_sendraw(channel, a:input)
     call ch_close_in(channel)
@@ -167,7 +174,7 @@ function! tslint#run(...)
   if exists('s:job') && job_status(s:job) != 'stop'
     call job_stop(s:job)
   endif
-  echomsg '[Tslint] Start'
+  " echomsg '[Tslint] Start'
 
   let mode = a:0 > 0 ? a:1 : 'r'
   let s:results = []
