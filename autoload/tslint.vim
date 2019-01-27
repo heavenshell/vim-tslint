@@ -150,7 +150,6 @@ function! s:buffer_to_file(file)
   else
     let dirname = fnamemodify(root_path, ':h')
     let tmpdir = printf('%s/.vim-tslint', dirname)
-    echomsg tmpdir
     if !isdirectory(tmpdir)
       call mkdir(tmpdir)
     endif
