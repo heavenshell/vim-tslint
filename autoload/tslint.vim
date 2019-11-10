@@ -88,17 +88,13 @@ function! s:exit_cb(ch, msg, file, mode, winsaveview, tmpfile, bufnr, autofix)
   call setqflist(errors, 'a')
 
   if a:autofix == 1
-    let lines = readfile(a:tmpfile)
     let view = winsaveview()
+    let lines = readfile(a:tmpfile)
+
     silent execute '% delete'
     call setline(1, lines)
     call winrestview(view)
   endif
-
-  "if len(errors) == 0 && len(warnings) && len(getqflist()) == 0
-  "  call setqflist([], 'r')
-  "  cclose
-  "endif
 
   call delete(a:tmpfile)
 
