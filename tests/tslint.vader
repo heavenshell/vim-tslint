@@ -5,15 +5,4 @@ Execute ('Tslint'):
   :sleep 1
 
   let qf = getqflist()
-  AssertEqual len(qf), 16
-
-Execute ('Tslint with tsuquyomi'):
-  :edit ./src/app.ts
-  :let g:tsuquyomi_disable_quickfixwrite = 0
-  :TsuquyomiGeterr
-  :write
-  :Tslint
-  :sleep 1
-
-  let qf = getqflist()
-  AssertEqual len(qf), 20
+  AssertEqual len(qf), 9
