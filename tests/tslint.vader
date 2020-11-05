@@ -11,7 +11,7 @@ Execute ('Tslint with tsuquyomi'):
   :edit ./src/app.ts
   :let g:tsuquyomi_disable_quickfixwrite = 0
   :TsuquyomiGeterr
-  :write
+  :write ./src/app.ts
   :Tslint
   :sleep 5
 
